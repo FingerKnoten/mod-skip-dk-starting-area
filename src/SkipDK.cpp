@@ -44,6 +44,7 @@
 #include "SharedDefines.h"
 #include "World.h"
 #include "WorldSession.h"
+#include "mod-boost.h"
 
 constexpr auto YESSKIPDK = 1;
 
@@ -208,24 +209,28 @@ public:
                 player->PrepareQuestMenu(creature->GetGUID());
             }
 
-            if (sConfigMgr->GetOption<bool>("Skip.Deathknight.Optional.Enable", true))
+            if (isPlayerBoostable(player))
             {
-                char const* localizedEntry;
-                switch (player->GetSession()->GetSessionDbcLocale())
+                if (sConfigMgr->GetOption<bool>("Skip.Deathknight.Optional.Enable", true))
                 {
-                case LOCALE_koKR: localizedEntry = LOCALE_LICHKING_1; break;
-                case LOCALE_frFR: localizedEntry = LOCALE_LICHKING_2; break;
-                case LOCALE_deDE: localizedEntry = LOCALE_LICHKING_3; break;
-                case LOCALE_zhCN: localizedEntry = LOCALE_LICHKING_4; break;
-                case LOCALE_zhTW: localizedEntry = LOCALE_LICHKING_5; break;
-                case LOCALE_esES: localizedEntry = LOCALE_LICHKING_6; break;
-                case LOCALE_esMX: localizedEntry = LOCALE_LICHKING_7; break;
-                case LOCALE_ruRU: localizedEntry = LOCALE_LICHKING_8; break;
-                case LOCALE_enUS: localizedEntry = LOCALE_LICHKING_0; break;
-                default: localizedEntry = LOCALE_LICHKING_0;
+                    char const* localizedEntry;
+                    switch (player->GetSession()->GetSessionDbcLocale())
+                    {
+                    case LOCALE_koKR: localizedEntry = LOCALE_LICHKING_1; break;
+                    case LOCALE_frFR: localizedEntry = LOCALE_LICHKING_2; break;
+                    case LOCALE_deDE: localizedEntry = LOCALE_LICHKING_3; break;
+                    case LOCALE_zhCN: localizedEntry = LOCALE_LICHKING_4; break;
+                    case LOCALE_zhTW: localizedEntry = LOCALE_LICHKING_5; break;
+                    case LOCALE_esES: localizedEntry = LOCALE_LICHKING_6; break;
+                    case LOCALE_esMX: localizedEntry = LOCALE_LICHKING_7; break;
+                    case LOCALE_ruRU: localizedEntry = LOCALE_LICHKING_8; break;
+                    case LOCALE_enUS: localizedEntry = LOCALE_LICHKING_0; break;
+                    default: localizedEntry = LOCALE_LICHKING_0;
+                    }
+                    AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, localizedEntry, GOSSIP_SENDER_MAIN, YESSKIPDK, "Are you sure you want to skip the starting zone?", 0, false);
                 }
-                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, localizedEntry, GOSSIP_SENDER_MAIN, YESSKIPDK, "Are you sure you want to skip the starting zone?", 0, false);
             }
+            
             player->TalkedToCreature(creature->GetEntry(), creature->GetGUID());
             SendGossipMenuFor(player, player->GetGossipTextId(creature), creature->GetGUID());
             return true;
